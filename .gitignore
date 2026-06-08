@@ -1,0 +1,52 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go build artifacts
+/bin/
+/dist/
+/build/
+
+# Coverage files
+*.cover
+*.coverprofile
+coverage.out
+coverage.html
+*.cov
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment files
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+
+# Goravel specific
+storage/*/cache/
+storage/*/logs/
+bootstrap/cache/
+
+# Binary application name
+/goravel-notification
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3

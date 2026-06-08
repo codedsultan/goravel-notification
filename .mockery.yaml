@@ -12,7 +12,7 @@ with-expecter: true
 log-level: warn
 
 packages:
-  github.com/goravel/notifications/contracts:
+  github.com/codedsultan/goravel-notification/contracts:
     interfaces:
       Manager:
         config:
