@@ -1,11 +1,14 @@
-# .golangci.yml — lint configuration for codedsultan/goravel-notification
+# .golangci.yml — v2 configuration for codedsultan/goravel-notification
 # Mirrors the style used across goravel/framework packages.
+
+version: "2"
 
 run:
   timeout: 5m
   tests: true
 
 linters:
+  default: none
   enable:
     - gofmt          # standard formatting
     - goimports      # import ordering
@@ -19,6 +22,12 @@ linters:
     - godot          # comment punctuation
     - whitespace     # leading/trailing blank lines
     - gci            # import grouping
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+    - gci
 
 linters-settings:
   goimports:

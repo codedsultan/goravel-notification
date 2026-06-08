@@ -1,11 +1,13 @@
 # .mockery.yaml — mockery v2 configuration for goravel/notifications
-# version: "v2"  # Changed from "2" to "v2" (string)
-
 # Output all mocks to mocks/<package-name>/<InterfaceName>.go
 # This matches the structure used by goravel/framework
 outpkg: "{{.PackageName}}"
 dir: "mocks/{{.PackageName}}"
 filename: "{{.InterfaceName}}.go"
+
+resolve-type-alias: false
+disable-version-string: true
+issue-845-fix: true
 
 # Use testify/mock as the base
 with-expecter: true

@@ -26,6 +26,12 @@ jobs:
       - name: Install mockery
         run: go install github.com/vektra/mockery/v2@latest
 
+      - name: Add GOPATH/bin to PATH
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Verify mockery installation
+        run: mockery --version
+
       - name: Regenerate mocks
         run: go generate ./...
 
