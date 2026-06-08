@@ -23,8 +23,8 @@ jobs:
           go-version: stable
           cache: false
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7  # Changed from v6 to v7
         with:
-          version: v2.8.0  # Use a specific v2 version
+          version: v2.8.0  # v2 works with v7 of the action
           args: --timeout=5m --modules-download-mode=readonly
           only-new-issues: true
