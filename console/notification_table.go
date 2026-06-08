@@ -75,7 +75,7 @@ func (r *CreateNotificationsTable_` + timestamp + `) Signature() string {
 }
 
 func (r *CreateNotificationsTable_` + timestamp + `) Up() error {
-	return facades.Schema().Create("notifications", func(table migration.Blueprint) {
+	return facades.Schema().Create("notifications", func(table *migration.Blueprint) {
 		table.String("id", 36)
 		table.Primary("id")
 		table.String("type")
