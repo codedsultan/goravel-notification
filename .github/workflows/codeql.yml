@@ -3,10 +3,10 @@ name: CodeQL
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
   schedule:
     # Run weekly on Mondays at 08:00 UTC — catches newly discovered vulnerabilities
     # even when there is no code activity
