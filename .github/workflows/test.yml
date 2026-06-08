@@ -1,47 +1,46 @@
-name: Test
+# .github/workflows/tag-release.yml
+name: Tag Release
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  test:
-    name: Test (Go ${{ matrix.go-version }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        go-version: ["1.25.x", "1.24.x"]
-        os: [ubuntu-latest]
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
+          fetch-depth: 0
 
-      - name: Download dependencies
-        run: go mod download
-
-      - name: Verify dependencies
-        run: go mod verify
-
-      - name: Run tests
-        run: go test -v -race -count=1 ./...
-
-      - name: Check for uncommitted changes
+      - name: Get latest tag
+        id: get_tag
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "Uncommitted changes detected. Please run 'go mod tidy' and commit the result."
-            git diff
-            exit 1
+          git fetch --tags
+          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        id: bump
+        run: |
+          latest="${{ steps.get_tag.outputs.latest_tag }}"
+          if [[ -z "$latest" ]]; then
+            new_tag="v1.0.0"
+          else
+            IFS='.' read -r major minor patch <<< "${latest#v}"
+            new_tag="v$major.$minor.$((patch+1))"
           fi
+          echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+
+      - name: Create and push tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "${{ steps.bump.outputs.new_tag }}"
+          message: "Release ${{ steps.bump.outputs.new_tag }}"
+          force_push_tag: false

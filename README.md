@@ -3,6 +3,7 @@
 [![Go](https://img.shields.io/github/go-mod/go-version/codedsultan/goravel-notification)](https://go.dev/)
 [![License](https://img.shields.io/github/license/codedsultan/goravel-notification)](LICENSE)
 [![Tests](https://github.com/codedsultan/goravel-notification/actions/workflows/test.yml/badge.svg)](https://github.com/codedsultan/goravel-notification/actions)
+[![codecov](https://codecov.io/github/codedsultan/goravel-notification/graph/badge.svg?token=3UQRKBQTKA)](https://codecov.io/github/codedsultan/goravel-notification)
 
 Goravel Notifications package — send alerts via **mail**, **database**, and **Slack**
 from a single `Notify()` call. Mirrors Laravel's Notifications system for PHP developers
@@ -223,3 +224,4 @@ func TestSomething(t *testing.T) {
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
