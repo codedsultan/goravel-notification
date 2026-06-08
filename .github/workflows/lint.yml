@@ -25,6 +25,6 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v2  # Changed from v1.64 to v2 for Go 1.25 support
+          # version: v2  # Changed from v1.64 to v2 for Go 1.25 support
           args: --timeout=5m --modules-download-mode=readonly
           only-new-issues: true
