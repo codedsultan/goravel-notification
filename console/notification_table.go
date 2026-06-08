@@ -62,7 +62,7 @@ func migrationStub(timestamp string) string {
 	return `package migrations
 
 import (
-	"github.com/goravel/framework/contracts/database/migration"
+	"github.com/goravel/framework/contracts/database/schema"
 	"github.com/goravel/framework/facades"
 )
 
@@ -75,7 +75,7 @@ func (r *CreateNotificationsTable_` + timestamp + `) Signature() string {
 }
 
 func (r *CreateNotificationsTable_` + timestamp + `) Up() error {
-	return facades.Schema().Create("notifications", func(table *migration.Blueprint) {
+	return facades.Schema().Create("notifications", func(table schema.Blueprint) {
 		table.String("id", 36)
 		table.Primary("id")
 		table.String("type")
