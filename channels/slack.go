@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/goravel/framework/contracts/log"
-
 	contractsnotification "github.com/codedsultan/goravel-notification/contracts"
+
+	"github.com/goravel/framework/contracts/log"
 )
 
 // SlackChannel delivers notifications to Slack via incoming webhooks.
@@ -67,7 +67,9 @@ func (c *SlackChannel) Send(
 	if err != nil {
 		return fmt.Errorf("slack channel: HTTP request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return fmt.Errorf("slack channel: webhook returned non-2xx status %d for %T", resp.StatusCode, n)

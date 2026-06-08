@@ -19,18 +19,22 @@ import (
 //	./artisan migrate
 type NotificationTableCommand struct{}
 
+// Signature returns the command signature.
 func (c *NotificationTableCommand) Signature() string {
 	return "notification:table"
 }
 
+// Description returns the command description.
 func (c *NotificationTableCommand) Description() string {
 	return "Create a migration for the notifications table (database channel)"
 }
 
+// Extend returns the command extend configuration.
 func (c *NotificationTableCommand) Extend() command.Extend {
 	return command.Extend{}
 }
 
+// Handle executes the command.
 func (c *NotificationTableCommand) Handle(ctx console.Context) error {
 	timestamp := time.Now().Format("2006_01_02_150405")
 	filename := timestamp + "_create_notifications_table.go"

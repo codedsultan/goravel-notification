@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sync"
 
+	contractsnotification "github.com/codedsultan/goravel-notification/contracts"
+
 	"github.com/goravel/framework/contracts/log"
 	"github.com/goravel/framework/contracts/queue"
-
-	contractsnotification "github.com/codedsultan/goravel-notification/contracts"
 )
 
 // Manager is the concrete implementation of contracts.Manager.

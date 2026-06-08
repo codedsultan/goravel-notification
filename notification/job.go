@@ -20,6 +20,6 @@ func (j *sendNotificationJob) Signature() string {
 
 // Handle is called by the queue worker. It delegates back to the synchronous
 // dispatch path, which iterates over channels and calls Send on each driver.
-func (j *sendNotificationJob) Handle(args ...any) error {
+func (j *sendNotificationJob) Handle(_ ...any) error {
 	return j.manager.dispatchSync(j.notifiable, j.n)
 }

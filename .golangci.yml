@@ -1,6 +1,4 @@
-# .golangci.yml — v2 configuration for codedsultan/goravel-notification
-# Mirrors the style used across goravel/framework packages.
-
+# .golangci.yml — complete working v2 configuration
 version: "2"
 
 run:
@@ -10,55 +8,37 @@ run:
 linters:
   default: none
   enable:
-    - gofmt          # standard formatting
-    - goimports      # import ordering
-    - govet          # go vet checks
-    - staticcheck    # staticcheck suite
-    - errcheck       # unhandled errors
-    - gosimple       # simplification suggestions
-    - ineffassign    # ineffectual assignments
-    - unused         # unused code
-    - misspell       # spelling in comments/strings
-    - godot          # comment punctuation
-    - whitespace     # leading/trailing blank lines
-    - gci            # import grouping
+    - govet
+    - errcheck
+    - staticcheck
+    - ineffassign
+    - unused
+    - misspell
+    - godot
+    - revive  # replacement for some older linters
+  settings:
+    misspell:
+      locale: US
+    godot:
+      scope: declarations
+      capital: true
 
 formatters:
   enable:
     - gofmt
     - goimports
     - gci
-
-linters-settings:
-  goimports:
-    local-prefixes: github.com/codedsultan/goravel-notification
-
-  gci:
-    sections:
-      - standard                              # stdlib
-      - default                               # third-party
-      - prefix(github.com/goravel/framework)  # goravel framework
-      - prefix(github.com/codedsultan/goravel-notification) # this package
-
-  godot:
-    scope: declarations
-    capital: true
-
-  misspell:
-    locale: US
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/codedsultan/goravel-notification
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/goravel/framework)
+        - prefix(github.com/codedsultan/goravel-notification)
 
 issues:
-  exclude-rules:
-    # Test files are exempt from some strict rules
-    - path: _test\.go
-      linters:
-        - errcheck
-        - godot
-
-    # Mock files are generated — do not lint them
-    - path: mocks/
-      linters:
-        - all
-
   max-issues-per-linter: 50
   max-same-issues: 5

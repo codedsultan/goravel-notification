@@ -1,3 +1,4 @@
+// Package config provides configuration structures for notifications.
 package config
 
 import "github.com/goravel/framework/facades"

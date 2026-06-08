@@ -4,14 +4,14 @@ package channels
 import (
 	"fmt"
 
+	contractsnotification "github.com/codedsultan/goravel-notification/contracts"
+
 	"github.com/goravel/framework/contracts/log"
 	contractsmail "github.com/goravel/framework/contracts/mail"
-
-	contractsnotification "github.com/codedsultan/goravel-notification/contracts"
 )
 
 // MailChannel delivers notifications via Goravel's mail facade.
-// It respects the full contracts/mail.Mail interface — HTML, plain-text, views,
+// It respects the full contracts/mail.Mail interface — Html, plain-text, views,
 // attachments, and custom headers are all forwarded from MailMessage.
 type MailChannel struct {
 	mail contractsmail.Mail
@@ -106,27 +106,27 @@ type NotificationMailable struct {
 	headers     map[string]string
 }
 
-// Envelope returns the mail envelope
+// Envelope returns the mail envelope.
 func (m *NotificationMailable) Envelope() *contractsmail.Envelope {
 	return m.envelope
 }
 
-// Content returns the mail content
+// Content returns the mail content.
 func (m *NotificationMailable) Content() *contractsmail.Content {
 	return m.content
 }
 
-// Attachments returns the mail attachments
+// Attachments returns the mail attachments.
 func (m *NotificationMailable) Attachments() []string {
 	return m.attachments
 }
 
-// Headers returns custom headers
+// Headers returns custom headers.
 func (m *NotificationMailable) Headers() map[string]string {
 	return m.headers
 }
 
-// Queue returns queue configuration (nil for immediate sending)
+// Queue returns queue configuration (nil for immediate sending).
 func (m *NotificationMailable) Queue() *contractsmail.Queue {
 	return nil
 }

@@ -11,6 +11,7 @@ import (
 	contractsnotification "github.com/codedsultan/goravel-notification/contracts"
 	mocklog "github.com/codedsultan/goravel-notification/mocks/log"
 	mockmail "github.com/codedsultan/goravel-notification/mocks/mail"
+
 	contractsmail "github.com/goravel/framework/contracts/mail"
 )
 

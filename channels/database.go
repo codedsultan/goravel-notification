@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/goravel/framework/contracts/database/orm"
-	"github.com/goravel/framework/contracts/log"
 
 	contractsnotification "github.com/codedsultan/goravel-notification/contracts"
+
+	"github.com/goravel/framework/contracts/database/orm"
+	"github.com/goravel/framework/contracts/log"
 )
 
 // DatabaseNotificationModel is the ORM model written to the notifications table.

@@ -121,7 +121,7 @@ func TestSlackChannel_Send_ReturnsError_WhenEmptyWebhook(t *testing.T) {
 func TestSlackChannel_Send_ReturnsError_WhenNon2xxResponse(t *testing.T) {
 	logger := mocklog.NewMockLog(t)
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
 	defer server.Close()

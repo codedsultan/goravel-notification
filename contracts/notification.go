@@ -126,7 +126,7 @@ type MailMessage struct {
 	From string
 	// ReplyTo sets the Reply-To header.
 	ReplyTo string
-	// Content holds the plain-text and/or HTML bodies.
+	// Content holds the plain-text and/or Html bodies.
 	// Mirrors the goravel/framework contracts/mail.Content struct.
 	Content MailContent
 	// Attachments is a list of absolute file paths to attach.
@@ -139,13 +139,13 @@ type MailMessage struct {
 // import the framework mail package directly.
 type MailContent struct {
 	// Html is the HTML body.
-	Html string
+	Html string `json:"html"` //nolint:revive,stylecheck
 	// Text is the plain-text body.
-	Text string
+	Text string `json:"text"`
 	// View is a Goravel view template name (alternative to Html/Text).
-	View string
+	View string `json:"view"`
 	// With is the data passed to the View template.
-	With map[string]any
+	With map[string]any `json:"with"`
 }
 
 // SlackMessage is a full incoming-webhook payload.

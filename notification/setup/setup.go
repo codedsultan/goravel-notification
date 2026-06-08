@@ -3,13 +3,13 @@
 package setup
 
 import (
-	"github.com/goravel/framework/contracts/console"
-	"github.com/goravel/framework/contracts/foundation"
-	"github.com/goravel/framework/facades"
-
 	"github.com/codedsultan/goravel-notification/channels"
 	notificationconsole "github.com/codedsultan/goravel-notification/console"
 	"github.com/codedsultan/goravel-notification/notification"
+
+	"github.com/goravel/framework/contracts/console"
+	"github.com/goravel/framework/contracts/foundation"
+	"github.com/goravel/framework/facades"
 )
 
 // Binding is the service-container key used to resolve the Manager.
@@ -29,7 +29,7 @@ type ServiceProvider struct{}
 // Register binds the notification Manager into the service container.
 // The binding is lazy — the Manager is not constructed until first use.
 func (s *ServiceProvider) Register(app foundation.Application) {
-	app.BindWith(Binding, func(app foundation.Application, _ map[string]any) (any, error) {
+	app.BindWith(Binding, func(_ foundation.Application, _ map[string]any) (any, error) {
 		logger := facades.Log()
 
 		// Queue is optional — notifications that implement ShouldQueue fall back
@@ -48,7 +48,7 @@ func (s *ServiceProvider) Register(app foundation.Application) {
 }
 
 // Boot registers the artisan commands provided by this package.
-func (s *ServiceProvider) Boot(app foundation.Application) {
+func (s *ServiceProvider) Boot(_ foundation.Application) {
 	facades.Artisan().Register([]console.Command{
 		&notificationconsole.NotificationTableCommand{},
 	})

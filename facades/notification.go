@@ -14,7 +14,7 @@ import (
 
 // Notification returns the Manager singleton from the service container.
 // It panics on startup if the ServiceProvider was not registered — this mirrors
-// the behaviour of other Goravel facades (facades.Mail, facades.Queue, etc.)
+// the behavior of other Goravel facades (facades.Mail, facades.Queue, etc.)
 // and surfaces misconfiguration immediately rather than at call time.
 func Notification() contractsnotification.Manager {
 	instance, err := facades.App().MakeWith(setup.Binding, map[string]any{})
