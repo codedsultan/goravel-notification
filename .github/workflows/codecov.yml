@@ -18,7 +18,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23.x"  
+          go-version: "1.25.x"  
           cache: true
 
       - name: Download dependencies
@@ -26,17 +26,10 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          # Run tests and collect coverage
+          # Only test packages that have test files
           go test -v -race -count=1 -coverprofile=coverage.out -covermode=atomic \
             ./channels/... \
             ./notification/...
-          
-          # If coverage.out exists, convert it to a format Codecov can use
-          if [ -f coverage.out ]; then
-            # Remove any lines from packages without tests
-            grep -v "no such tool" coverage.out > coverage.clean.out || true
-            mv coverage.clean.out coverage.out
-          fi
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
