@@ -1,0 +1,62 @@
+# .mockery.yaml — mockery v2 configuration for goravel/notifications
+# version: "v2"  # Changed from "2" to "v2" (string)
+
+# Output all mocks to mocks/<package-name>/<InterfaceName>.go
+# This matches the structure used by goravel/framework
+outpkg: "{{.PackageName}}"
+dir: "mocks/{{.PackageName}}"
+filename: "{{.InterfaceName}}.go"
+
+# Use testify/mock as the base
+with-expecter: true
+log-level: warn
+
+packages:
+  github.com/goravel/notifications/contracts:
+    interfaces:
+      Manager:
+        config:
+          dir: mocks/notification
+          outpkg: notification
+          filename: Manager.go
+      Channel:
+        config:
+          dir: mocks/notification
+          outpkg: notification
+          filename: Channel.go
+      Notifiable:
+        config:
+          dir: mocks/notification
+          outpkg: notification
+          filename: Notifiable.go
+
+  # Mock the framework interfaces we depend on so channels are testable
+  # without a running Goravel application.
+  github.com/goravel/framework/contracts/mail:
+    interfaces:
+      Mail:
+        config:
+          dir: mocks/mail
+          outpkg: mail
+          filename: Mail.go
+
+  github.com/goravel/framework/contracts/log:
+    interfaces:
+      Log:
+        config:
+          dir: mocks/log
+          outpkg: log
+          filename: Log.go
+
+  github.com/goravel/framework/contracts/database/orm:
+    interfaces:
+      Orm:
+        config:
+          dir: mocks/orm
+          outpkg: orm
+          filename: Orm.go
+      Query:
+        config:
+          dir: mocks/orm/query
+          outpkg: query
+          filename: Query.go

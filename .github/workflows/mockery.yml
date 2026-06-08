@@ -1,0 +1,40 @@
+name: Mockery
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  mockery:
+    name: Verify mocks are up to date
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.x"
+          cache: true
+
+      - name: Install mockery
+        run: go install github.com/vektra/mockery/v2@latest
+
+      - name: Regenerate mocks
+        run: go generate ./...
+
+      - name: Check for mock drift
+        run: |
+          if [ -n "$(git status --porcelain mocks/)" ]; then
+            echo "Mocks are out of date. Run 'go generate ./...' locally and commit the result."
+            echo ""
+            git diff mocks/
+            exit 1
+          fi
+          echo "All mocks are up to date."

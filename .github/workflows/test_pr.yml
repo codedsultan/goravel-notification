@@ -1,0 +1,52 @@
+name: Test PR
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-pr:
+    name: Test PR (Go ${{ matrix.go-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ["1.22.x", "1.23.x"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history so go mod tidy diff checks work correctly
+          fetch-depth: 0
+
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify go.mod is tidy
+        run: |
+          go mod tidy
+          if [ -n "$(git status --porcelain go.mod go.sum)" ]; then
+            echo "go.mod or go.sum is not tidy. Run 'go mod tidy' locally and commit the result."
+            git diff go.mod go.sum
+            exit 1
+          fi
+
+      - name: Run tests with race detector
+        run: go test -v -race -count=1 -timeout=120s ./...
+
+      - name: Check test coverage threshold
+        run: |
+          go test -coverprofile=coverage.out -covermode=atomic ./...
+          COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | tr -d '%')
+          echo "Total coverage: ${COVERAGE}%"
+          # Fail if coverage drops below 70%
+          awk -v cov="$COVERAGE" 'BEGIN { if (cov+0 < 70) { print "Coverage " cov "% is below 70% threshold"; exit 1 } }'

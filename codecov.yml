@@ -1,0 +1,25 @@
+# codecov.yml — coverage reporting configuration for codedsultan/goravel-notification
+
+coverage:
+  status:
+    project:
+      default:
+        # Require overall coverage to stay above 70%
+        target: 70%
+        threshold: 2%   # allow up to 2% drop before failing
+        base: auto
+    patch:
+      default:
+        # New code introduced in a PR must be at least 70% covered
+        target: 70%
+        threshold: 5%
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: true   # only comment when coverage actually changes
+
+ignore:
+  - "mocks/**"       # generated mocks — not meaningful to cover
+  - "config/**"      # thin init() wrappers
+  - "console/**"     # artisan command scaffolding

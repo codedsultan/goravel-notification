@@ -1,0 +1,55 @@
+# .golangci.yml — lint configuration for codedsultan/goravel-notification
+# Mirrors the style used across goravel/framework packages.
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - gofmt          # standard formatting
+    - goimports      # import ordering
+    - govet          # go vet checks
+    - staticcheck    # staticcheck suite
+    - errcheck       # unhandled errors
+    - gosimple       # simplification suggestions
+    - ineffassign    # ineffectual assignments
+    - unused         # unused code
+    - misspell       # spelling in comments/strings
+    - godot          # comment punctuation
+    - whitespace     # leading/trailing blank lines
+    - gci            # import grouping
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/codedsultan/goravel-notification
+
+  gci:
+    sections:
+      - standard                              # stdlib
+      - default                               # third-party
+      - prefix(github.com/goravel/framework)  # goravel framework
+      - prefix(github.com/codedsultan/goravel-notification) # this package
+
+  godot:
+    scope: declarations
+    capital: true
+
+  misspell:
+    locale: US
+
+issues:
+  exclude-rules:
+    # Test files are exempt from some strict rules
+    - path: _test\.go
+      linters:
+        - errcheck
+        - godot
+
+    # Mock files are generated — do not lint them
+    - path: mocks/
+      linters:
+        - all
+
+  max-issues-per-linter: 50
+  max-same-issues: 5
