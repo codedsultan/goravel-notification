@@ -50,3 +50,5 @@ bootstrap/cache/
 *.db
 *.sqlite
 *.sqlite3
+
+cmd.sh
