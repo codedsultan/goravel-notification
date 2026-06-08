@@ -3,28 +3,28 @@ name: Lint
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
-
-permissions:
-  contents: read
-  pull-requests: read
+      - master
 
 jobs:
-  golangci:
-    name: lint
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          go-version: stable
-          cache: false
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v7  # Changed from v6 to v7
+          go-version: "1.24.x"
+          cache: true
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v2.8.0  # v2 works with v7 of the action
-          args: --timeout=5m --modules-download-mode=readonly
-          only-new-issues: true
+          version: latest
+          args: --timeout=5m
