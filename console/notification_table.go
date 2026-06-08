@@ -63,18 +63,21 @@ func migrationStub(timestamp string) string {
 
 import (
 	"github.com/goravel/framework/contracts/database/schema"
-	"github.com/goravel/framework/facades"
+
+	"goravel/app/facades"
 )
 
-// CreateNotificationsTable_` + timestamp + ` creates the notifications table
-// used by codedsultan/goravel-notification' database channel.
-type CreateNotificationsTable_` + timestamp + ` struct{}
+type M` + timestamp + `CreateNotificationsTable struct{}
 
-func (r *CreateNotificationsTable_` + timestamp + `) Signature() string {
+func (r *M` + timestamp + `CreateNotificationsTable) Signature() string {
 	return "` + timestamp + `_create_notifications_table"
 }
 
-func (r *CreateNotificationsTable_` + timestamp + `) Up() error {
+func (r *M` + timestamp + `CreateNotificationsTable) Up() error {
+	if facades.Schema().HasTable("notifications") {
+		return nil
+	}
+
 	return facades.Schema().Create("notifications", func(table schema.Blueprint) {
 		table.String("id", 36)
 		table.Primary("id")
@@ -88,7 +91,7 @@ func (r *CreateNotificationsTable_` + timestamp + `) Up() error {
 	})
 }
 
-func (r *CreateNotificationsTable_` + timestamp + `) Down() error {
+func (r *M` + timestamp + `CreateNotificationsTable) Down() error {
 	return facades.Schema().DropIfExists("notifications")
 }
 `
