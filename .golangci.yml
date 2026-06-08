@@ -1,44 +1,65 @@
-# .golangci.yml — complete working v2 configuration
 version: "2"
-
 run:
-  timeout: 5m
   tests: true
-
 linters:
-  default: none
   enable:
-    - govet
-    - errcheck
-    - staticcheck
-    - ineffassign
-    - unused
-    - misspell
     - godot
-    - revive  # replacement for some older linters
+    - misspell
+    - revive
+    - whitespace
   settings:
-    misspell:
-      locale: US
     godot:
       scope: declarations
       capital: true
-
+    misspell:
+      locale: US
+    revive:
+      rules:
+        - name: var-naming
+          severity: warning
+          disabled: false
+          exclude:
+            - Html$
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - errcheck
+          - godot
+        path: _test\.go
+      - linters:
+          - all
+        path: mocks/
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  max-issues-per-linter: 50
+  max-same-issues: 5
 formatters:
   enable:
+    - gci
     - gofmt
     - goimports
-    - gci
   settings:
-    goimports:
-      local-prefixes:
-        - github.com/codedsultan/goravel-notification
     gci:
       sections:
         - standard
         - default
         - prefix(github.com/goravel/framework)
         - prefix(github.com/codedsultan/goravel-notification)
-
-issues:
-  max-issues-per-linter: 50
-  max-same-issues: 5
+    goimports:
+      local-prefixes:
+        - github.com/codedsultan/goravel-notification
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
