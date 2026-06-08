@@ -37,6 +37,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.out
           flags: unittests
-          name: goravel-notifications
           fail_ci_if_error: false
           verbose: true
+
+      
