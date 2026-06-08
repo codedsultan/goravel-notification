@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/github/license/codedsultan/goravel-notification)](LICENSE)
 [![Tests](https://github.com/codedsultan/goravel-notification/actions/workflows/test.yml/badge.svg)](https://github.com/codedsultan/goravel-notification/actions)
 
-Official Goravel Notifications package — send alerts via **mail**, **database**, and **Slack**
+Goravel Notifications package — send alerts via **mail**, **database**, and **Slack**
 from a single `Notify()` call. Mirrors Laravel's Notifications system for PHP developers
 who want the same ergonomics in Go.
 
@@ -16,15 +16,17 @@ who want the same ergonomics in Go.
 go get github.com/codedsultan/goravel-notification
 ```
 
-Register the service provider in `bootstrap/app.go`:
+Register the service provider in `bootstrap/providers.go`:
 
 ```go
 import notificationsetup "github.com/codedsultan/goravel-notification/notification/setup"
 
-app.Register([]foundation.ServiceProvider{
-    // ...existing providers...
-    &notificationsetup.ServiceProvider{},
-})
+func Providers() []foundation.ServiceProvider {
+    return []foundation.ServiceProvider{
+        // ...existing providers...
+        &notificationsetup.ServiceProvider{},
+    }
+}
 ```
 
 Create the database table (required for the `database` channel):
@@ -33,6 +35,9 @@ Create the database table (required for the `database` channel):
 ./artisan notification:table
 ./artisan migrate
 ```
+
+> The `notification:table` command generates a migration file and automatically registers
+> it in `bootstrap/migrations.go`.
 
 ---
 
@@ -45,38 +50,51 @@ Create the database table (required for the `database` channel):
 package notifications
 
 import (
-    contractsnotification "github.com/codedsultan/goravel-notification/contracts"
-    "myapp/app/models"
+    contracts "github.com/codedsultan/goravel-notification/contracts"
     "fmt"
 )
 
 type InvoicePaid struct {
-    Invoice *models.Invoice
+    InvoiceID uint
+    Amount    float64
 }
 
-func NewInvoicePaid(invoice *models.Invoice) *InvoicePaid {
-    return &InvoicePaid{Invoice: invoice}
+func NewInvoicePaid(invoiceID uint, amount float64) *InvoicePaid {
+    return &InvoicePaid{InvoiceID: invoiceID, Amount: amount}
 }
 
 func (n *InvoicePaid) ID() string { return "" } // auto UUID
 
-func (n *InvoicePaid) Via(_ contractsnotification.Notifiable) []string {
-    return []string{"mail", "database"}
+func (n *InvoicePaid) Via(_ contracts.Notifiable) []string {
+    return []string{"mail", "database", "slack"}
 }
 
-func (n *InvoicePaid) ToMail(_ contractsnotification.Notifiable) contractsnotification.MailMessage {
-    return contractsnotification.MailMessage{
+func (n *InvoicePaid) ToMail(_ contracts.Notifiable) contracts.MailMessage {
+    return contracts.MailMessage{
         Subject: "Invoice Paid",
-        Content: contractsnotification.MailContent{
-            Text: fmt.Sprintf("Your invoice #%d for $%.2f has been paid.", n.Invoice.ID, n.Invoice.Amount),
+        Content: contracts.MailContent{
+            Html: fmt.Sprintf("<p>Your invoice #%d for $%.2f has been paid.</p>", n.InvoiceID, n.Amount),
         },
     }
 }
 
-func (n *InvoicePaid) ToDatabase(_ contractsnotification.Notifiable) map[string]any {
+func (n *InvoicePaid) ToDatabase(_ contracts.Notifiable) map[string]any {
     return map[string]any{
-        "invoice_id": n.Invoice.ID,
-        "amount":     n.Invoice.Amount,
+        "invoice_id": n.InvoiceID,
+        "amount":     fmt.Sprintf("%.2f", n.Amount),
+    }
+}
+
+func (n *InvoicePaid) ToSlack(_ contracts.Notifiable) contracts.SlackMessage {
+    return contracts.SlackMessage{
+        Text: fmt.Sprintf("Invoice #%d for $%.2f has been paid.", n.InvoiceID, n.Amount),
+        Attachments: []contracts.SlackAttachment{
+            {
+                Title: "Invoice Paid",
+                Text:  fmt.Sprintf("Amount: $%.2f", n.Amount),
+                Color: "good",
+            },
+        },
     }
 }
 ```
@@ -91,7 +109,7 @@ import (
     "fmt"
     "github.com/goravel/framework/database/orm"
     notificationfacades "github.com/codedsultan/goravel-notification/facades"
-    contractsnotification "github.com/codedsultan/goravel-notification/contracts"
+    contracts "github.com/codedsultan/goravel-notification/contracts"
 )
 
 type User struct {
@@ -112,7 +130,7 @@ func (u *User) RouteNotificationFor(channel string) string {
 }
 
 // Notify is a convenience helper (mirrors Laravel's Notifiable trait)
-func (u *User) Notify(n contractsnotification.Notification) error {
+func (u *User) Notify(n contracts.Notification) error {
     return notificationfacades.Notification().Send(u, n)
 }
 ```
@@ -120,27 +138,41 @@ func (u *User) Notify(n contractsnotification.Notification) error {
 ### 3. Send it
 
 ```go
-// In a controller, service, or job:
-
 // Option A — via the model helper
-_ = user.Notify(notifications.NewInvoicePaid(invoice))
+_ = user.Notify(notifications.NewInvoicePaid(42, 99.99))
 
 // Option B — via the facade directly
-_ = facades.Notification().Send(&user, notifications.NewInvoicePaid(invoice))
+_ = notificationfacades.Notification().Send(&user, notifications.NewInvoicePaid(42, 99.99))
 
 // Option C — always synchronous, even for ShouldQueue notifications
-_ = facades.Notification().SendNow(&user, notifications.NewInvoicePaid(invoice))
+_ = notificationfacades.Notification().SendNow(&user, notifications.NewInvoicePaid(42, 99.99))
 ```
 
 ---
 
 ## Channels
 
-| Name       | Driver                 | What it needs                                              |
-|------------|------------------------|------------------------------------------------------------|
-| `mail`     | `facades.Mail()`       | `RouteNotificationFor("mail")` → email address            |
-| `database` | `facades.Orm()`        | `RouteNotificationFor("database")` → model's string PK    |
-| `slack`    | HTTP incoming webhook  | `RouteNotificationFor("slack")` → webhook URL             |
+| Name       | Driver                | What it needs                                           |
+|------------|-----------------------|---------------------------------------------------------|
+| `mail`     | `facades.Mail()`      | `RouteNotificationFor("mail")` → email address         |
+| `database` | `facades.Orm()`       | `RouteNotificationFor("database")` → model's string PK |
+| `slack`    | HTTP incoming webhook | `RouteNotificationFor("slack")` → webhook URL          |
+
+### Mail
+
+Uses Goravel's mail facade. Set `Content.Html` for HTML emails or `Content.View` for
+a Goravel view template. Do **not** use `Content.Text` — the framework treats it as a
+template path, not a raw string.
+
+### Database
+
+Stores notifications in the `notifications` table. The `data` column is JSON-encoded
+from the map returned by `ToDatabase()`.
+
+### Slack
+
+Posts to a Slack incoming webhook URL. Set `RouteNotificationFor("slack")` to return
+the webhook URL on your notifiable model.
 
 ### Custom channels
 
@@ -149,12 +181,13 @@ type SMSChannel struct{}
 
 func (SMSChannel) Name() string { return "sms" }
 func (SMSChannel) Send(notifiable contracts.Notifiable, n contracts.Notification) error {
-    // call your SMS provider here
+    phone := notifiable.RouteNotificationFor("sms")
+    // call your SMS provider with phone
     return nil
 }
 
-// In a ServiceProvider Boot():
-facades.Notification().Extend(&SMSChannel{})
+// Register in a ServiceProvider Boot():
+notificationfacades.Notification().Extend(&SMSChannel{})
 ```
 
 ---
@@ -164,7 +197,7 @@ facades.Notification().Extend(&SMSChannel{})
 Implement `contracts.ShouldQueue` to dispatch via Goravel's queue:
 
 ```go
-func (n *InvoicePaid) OnQueue() string     { return "notifications" }
+func (n *InvoicePaid) OnQueue() string      { return "notifications" }
 func (n *InvoicePaid) OnConnection() string { return "" }
 ```
 
